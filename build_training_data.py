@@ -35,8 +35,8 @@ def create_datapoint(graph,n,g):
     print(datapoints)
     return datapoints
 
-def randomize_create_dataset(graph):
-    n = 1300
+def randomize_create_dataset(graph,n):
+    
     g = encode_graph(graph)
     # print(g)
     dataset = []
@@ -64,10 +64,16 @@ if __name__ == "__main__":
             [0, -1, -1, -1, -1, 2, -1, -1, 0, -1, 8],
             [0, -1, -1, -1, -1, -1, -1, -1, -1, 0, 7],
             [0, -1, -1, -1, -1, -1, -1, -1, -1, -1, 0]]
-    
-    dataset = randomize_create_dataset(graph)
+    # Train Data
+    dataset = randomize_create_dataset(graph,n = 1300)
     # print(dataset)
     df = pd.DataFrame(dataset,columns = ["D" + str(i) for i in range(len(dataset[0]))])
     # print(df.head())
-    df.to_csv("RoutesData.csv")    
+    df.to_csv("RoutesData.csv")   
+    # Test Data
+    dataset = randomize_create_dataset(graph,n = 1000)
+    # print(dataset)
+    df = pd.DataFrame(dataset,columns = ["D" + str(i) for i in range(len(dataset[0]))])
+    # print(df.head())
+    df.to_csv("TestRoutesData.csv")     
         
