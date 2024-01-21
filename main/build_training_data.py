@@ -16,6 +16,10 @@ def encode_graph(graph):
     # print("".join(val))
     # print(val)
     return val
+
+def encode_graph_v2(graph):
+    
+    pass
 def create_datapoint(graph,n,g):
     # random.seed(random.randint(1,11))
     start_node = random.randint(5,11)
@@ -66,14 +70,11 @@ if __name__ == "__main__":
             [0, -1, -1, -1, -1, -1, -1, -1, -1, -1, 0]]
     # Train Data
     dataset = randomize_create_dataset(graph,n = 10300)
-    # print(dataset)
     df = pd.DataFrame(dataset,columns = ["D" + str(i) for i in range(len(dataset[0]))])
-    # print(df.head())
     df.to_csv("../data/RoutesData.csv")   
+    
     # Test Data
     dataset = randomize_create_dataset(graph,n = 1000)
-    # print(dataset)
     df = pd.DataFrame(dataset,columns = ["D" + str(i) for i in range(len(dataset[0]))])
-    # print(df.head())
     df.to_csv("../data/TestRoutesData.csv")     
         
