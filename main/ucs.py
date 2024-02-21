@@ -79,5 +79,3 @@ if __name__ == "__main__":
     dis,path = ucs(graph,11,1,3)
     print(dis)
     print(path)
-    
-                
