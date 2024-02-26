@@ -38,18 +38,18 @@ The sample `cost` matrix and `heuristic` list are provided for testing the trave
 
 ## Graph 
 ### Flow
-- origin : lat long
-- destination : lat long
+- Input
+    - Start node
+    - Destination node
 
 - Ucs algorithm : To calcluate broad btw the above points 
     - distance 
     - width 
 
-    distance & width = 0.3*distance + 0.7*width 
+    - distance & width = 0.3*distance + 0.7*width [Graph edges]
 
-- 1--2--3--5--23
+- Use TomTom api to calibrate the route based on the route calculated by UCS algorithm. 
 
-- 1--2 
-- 2--3
-- 3--5
-- 5--23 
+- Use Leaflet JS to show the simulation of UCS algorithm finding the broadest route.
+
+
