@@ -2,7 +2,54 @@ import json
 import urlfetch
 from urllib.parse import quote
 from geopy.geocoders import Nominatim
+import pandas as pd
+import numpy as np
+from main.simulation.ucs import *
 
+def convert_cooridinates_csv_to_json(df):
+    all_coords = [ [float(i.split(",")[0].strip()),float(i.split(",")[1].strip())] for i in df["Coordinates"].to_list()]
+    nodes = df["Node"].to_list()
+    big_dict = dict()
+    for i,j in zip(nodes,all_coords):
+        big_dict[i] = j
+    return big_dict
+def create_adjacency_matrix(df,n):
+    graph = [[0 for i in range(n+1)] for j in range(n+1)]
+    for i,row in df.iterrows():
+        graph[int(row["source"])][int(row["destination"])] = row["width"]
+        # graph[int(row["destination"])][int(row["source"])] = row["width"]
+        # print(row["source"])
+        
+    return graph
+ 
+def load_data():
+    excel_file_path = 'dataset4POC 3.xlsx'  # path of the excel file
+    df_graph_info = pd.read_excel(excel_file_path,"graph")
+    df_coords_info = pd.read_excel(excel_file_path,"coordinates")
+    location_info = convert_cooridinates_csv_to_json(df_coords_info)
+    total_nodes = len(location_info.keys())
+    graph = create_adjacency_matrix(df_graph_info,44)
+    # print(graph)
+    return graph,location_info,total_nodes
+
+def get_route_for_map(graph,n,st,end):
+    path,dis,path_list = ucs(graph,n+1,st,end)
+    # print(dis)
+    print(path_list)
+    return path_list
+def get_all_points_for_ucs_route(path_list,location_info):
+    n = len(path_list)
+    lat = []
+    longi = []
+    for i in range(0,n-1):
+        p1 = location_info[path_list[i]]
+        p2 = location_info[path_list[i+1]]
+        print(p1)
+        print(p2)
+        la,lo = getpoints(p1[0],p1[1],p2[0],p2[1])
+        lat.extend(la)
+        longi.extend(lo)
+    return [{'latpoints':lat,'longpoints':longi,'numofpoints':len(lat)}]
 def get_drive_time(o_lat,o_long,d_lat,d_long):
     
     url = """https://api.tomtom.com/routing/1/calculateRoute/{},{}:{},{}/json?key=mHywp1xqUaq62ROfTAuCRKtxjTYA0Zak&routeType=shortest""".format(o_lat,o_long,d_lat,d_long)
@@ -37,31 +84,12 @@ def getpoints(o_lat,o_long,d_lat,d_long):
                 longitude.append(i['longitude'])
             else:
                 print(i)
-        return [{'latpoints':latitude,'longpoints':longitude,'numofpoints':len(latitude)}]
+        # return [{'latpoints':latitude,'longpoints':longitude,'numofpoints':len(latitude)}]
+        return latitude,longitude
     except:
         print('Error in getting the points')
             
 
-# def get_latlong(obname,oaname,dbname,daname):
-#     li = [obname,oaname,dbname,daname]
-#     for i in range(0,len(li)):
-#         li[i]=li[i].replace(' ','%20')
-#         li[i] = li[i].replace('.','')
-#     urlo="https://nominatim.openstreetmap.org/search/{}%20{}%20Bangalore?format=json&addressdetails=1&limit=1".format(li[0],li[1])
-#     responseo = urlfetch.get(urlo)
-#     urld="https://nominatim.openstreetmap.org/search/{}%20{}%20Bangalore?format=json&addressdetails=1&limit=1".format(li[2],li[3])
-#     responsed = urlfetch.get(urld)
-#     print(responseo.content)
-#     try:
-#         o_json = json.loads(responseo.content)
-#         d_json = json.loads(responsed.content)
-#         lat_o = float(o_json[0]['lat'])
-#         lon_o = float(o_json[0]['lon'])
-#         lat_d = float(d_json[0]['lat'])
-#         lon_d = float(d_json[0]['lon'])
-#         return [[lat_o,lon_o],[lat_d,lon_d]]
-#     except:
-#         print("Bt in lat long function")
         
 def get_latlong(origin_add, dest_add):
     try:
@@ -85,4 +113,7 @@ def get_reverse_geo(lat,lon):
         print("Error in reverse geo code")
 
 if __name__ == "__main__":
-    getpoints(12.9078462, 77.60113103400322, 12.96384535, 77.72024040170766)
+    df_coords_info = pd.read_excel('dataset4POC 3.xlsx',"coordinates")
+    location_info = convert_cooridinates_csv_to_json(df_coords_info)
+    total_nodes = len(location_info.keys())
+    print(total_nodes)

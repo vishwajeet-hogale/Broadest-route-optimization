@@ -26,7 +26,7 @@ def ucs(graph,n,start,goal):
                 queue.append([neigh,cost+graph[curr_node][neigh],path + ", " + str(neigh)]) 
             # print(graph1)      
             # print()         
-    return max_path,max_dis
+    return max_path,max_dis,[int(i) for i in max_path.split(",")]
 def get_path(graph,n,start,goal):
     max_dis = -1
     max_path = ""

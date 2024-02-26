@@ -28,3 +28,28 @@ The `tri_Traversal` function calls these three traversal functions and returns a
 The code also includes some utility functions like `Sort_Tuple`, `check`, `pop`, and `calc_min` that are used within the traversal functions for sorting tuples, checking the existence of an element in a list of tuples, popping elements from the priority queue, and calculating the minimum cost path, respectively.
 
 The sample `cost` matrix and `heuristic` list are provided for testing the traversals with a graph. The function is then called with these inputs to obtain the paths for each traversal algorithm.
+
+
+
+
+
+
+
+
+## Graph 
+### Flow
+- origin : lat long
+- destination : lat long
+
+- Ucs algorithm : To calcluate broad btw the above points 
+    - distance 
+    - width 
+
+    distance & width = 0.3*distance + 0.7*width 
+
+- 1--2--3--5--23
+
+- 1--2 
+- 2--3
+- 3--5
+- 5--23 
