@@ -15,23 +15,14 @@ app=Flask(__name__)
 # mysql = MySQL(app)
 
 app.secret_key = "mysecretkey"
-oadd = None
-dadd = None
+# oadd = None
+# dadd = None
 @app.route('/')
 def home():
-    
-        global oadd
-        global dadd
-        
        
         flash('Thank you! Your ambulance will arrive soon')
-       
-        # oadd = "Vega City" + ',' + "Bangalore"
-
-        # dadd = "Brigade Tech Gardens" + ',' + "Bangalore"
-        # points = m.get_latlong(oadd,dadd)
-        st = 1
-        end = 14 
+        st = 40
+        end = 19
         pst = location_info[st]
         pend = location_info[end] 
         path_list = m.get_route_for_map(graph,n,st,end)
