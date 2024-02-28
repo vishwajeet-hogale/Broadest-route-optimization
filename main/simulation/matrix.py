@@ -16,10 +16,7 @@ def convert_cooridinates_csv_to_json(df):
 def create_adjacency_matrix(df,n):
     graph = [[0 for i in range(n+1)] for j in range(n+1)]
     for i,row in df.iterrows():
-        graph[int(row["source"])][int(row["destination"])] = row["width"]
-        # graph[int(row["destination"])][int(row["source"])] = row["width"]
-        # print(row["source"])
-        
+        graph[int(row["source"])][int(row["destination"])] = 0.98*float(row["width"]) + 0.02 * float(row["distance"]*1000)        
     return graph
  
 def load_data():
