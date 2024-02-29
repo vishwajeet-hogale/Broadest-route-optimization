@@ -1,5 +1,6 @@
 import json
 import urlfetch
+import requests
 from urllib.parse import quote
 from geopy.geocoders import Nominatim
 import pandas as pd
@@ -16,9 +17,10 @@ def convert_cooridinates_csv_to_json(df):
 def create_adjacency_matrix(df,n):
     graph = [[0 for i in range(n+1)] for j in range(n+1)]
     for i,row in df.iterrows():
-        graph[int(row["source"])][int(row["destination"])] = 0.98*float(row["width"]) + 0.02 * float(row["distance"]*1000)        
+        # graph[int(row["source"])][int(row["destination"])] = (1.1-float(row["width"]) )*float(row["distance"])  
+        graph[int(row["source"])][int(row["destination"])] = float(row["width"])    
     return graph
- 
+
 def load_data():
     excel_file_path = 'dataset4POC 3.xlsx'  # path of the excel file
     df_graph_info = pd.read_excel(excel_file_path,"graph")
@@ -108,6 +110,50 @@ def get_reverse_geo(lat,lon):
         return roadname
     except:
         print("Error in reverse geo code")
+
+def get_support_points(path_list,location_info):
+    support_points = path_list[1:-1]
+    final_list = []
+    for i in support_points:
+        d1 = dict()
+        d1["latitude"] = location_info[i][0]
+        d1["longitude"] = location_info[i][1]
+        final_list.append(d1)
+    return final_list
+        
+
+def get_points_using_supporting_points(support_points,st,end):
+    url = f'https://api.tomtom.com/routing/1/calculateRoute/{st[0]}%2C{st[1]}%3A{end[0]}%2C{end[1]}/json?key=mHywp1xqUaq62ROfTAuCRKtxjTYA0Zak'
+
+
+    headers = {
+        'accept': '*/*',
+        'Content-Type': 'application/json'
+    }
+
+
+    data = {
+        "supportingPoints": support_points
+        
+    }
+
+    latitude,longitude = [],[]
+    response = requests.post(url, headers=headers, json=data, verify='Corp-Prj-Root-CA.crt')
+    try:
+        response_json = json.loads(response.content)
+        points = response_json['routes'][0]['legs'][0]['points']
+        for i in points:
+            
+            if len(i)==2:
+                latitude.append(i['latitude'])
+                longitude.append(i['longitude'])
+            else:
+                print(i)
+        # return [{'latpoints':latitude,'longpoints':longitude,'numofpoints':len(latitude)}]
+        return [{'latpoints':latitude,'longpoints':longitude,'numofpoints':len(latitude)}]
+    except:
+        print('Error in getting the points')
+
 
 if __name__ == "__main__":
     df_coords_info = pd.read_excel('dataset4POC 3.xlsx',"coordinates")

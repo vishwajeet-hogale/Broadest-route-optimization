@@ -14,12 +14,15 @@ app.secret_key = "mysecretkey"
 @app.route('/')
 def home():
         flash('Thank you! Your ambulance will arrive soon')
-        st = 2
-        end = 6
+        st = 3
+        end = 44
         pst = location_info[st]
         pend = location_info[end] 
         path_list = m.get_route_for_map(graph,n,st,end)
-        j = m.get_all_points_for_ucs_route(path_list,location_info)   # Replace this with node ordering. 
+        print(path_list)
+        support_points = m.get_support_points(path_list,location_info)
+        print(support_points)
+        j = m.get_points_using_supporting_points(support_points,pst,pend)   # Replace this with node ordering. 
         origin=pst
         dest=pend
         print(j[0]['numofpoints'])
