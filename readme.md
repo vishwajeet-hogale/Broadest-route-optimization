@@ -42,7 +42,7 @@ The sample `cost` matrix and `heuristic` list are provided for testing the trave
     - Start node
     - Destination node
 
-- Ucs algorithm : To calcluate broad btw the above points 
+- Ucs algorithm : To calculate broadest road btw the above points 
     - distance 
     - width 
 
