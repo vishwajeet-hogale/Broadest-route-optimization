@@ -3,7 +3,7 @@ from flask import Flask, render_template, request, redirect, url_for, flash
 import random
 import main.simulation.matrix as m
 import json
-
+import main.simulation.traversal as traversal
 
 app=Flask(__name__)
 
@@ -14,11 +14,12 @@ app.secret_key = "mysecretkey"
 @app.route('/')
 def home():
         flash('Thank you! Your ambulance will arrive soon')
-        st = 3
-        end = 44
+        st = 42
+        end = 3
         pst = location_info[st]
         pend = location_info[end] 
-        path_list = m.get_route_for_map(graph,n,st,end)
+        dist,avg_width,path_list = traversal.findpath('dataset4POC 3.xlsx',st-1,end-1)
+        print("path_list from UCS")
         print(path_list)
         support_points = m.get_support_points(path_list,location_info)
         print(support_points)
