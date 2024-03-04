@@ -22,18 +22,19 @@ def home():
         print("path_list from UCS")
         print(path_list)
         support_points = m.get_support_points(path_list,location_info)
-        print(support_points)
+        # print(support_points)
         j = m.get_points_using_supporting_points(support_points,pst,pend)   # Replace this with node ordering. 
         origin=pst
         dest=pend
-        print(j[0]['numofpoints'])
+        # print(j[0]['numofpoints'])
         lat = []
         lon=[]
         lat=j[0]['latpoints']
-        lon=j[0]['longpoints']        
+        lon=j[0]['longpoints']
+       
         return render_template('map.html',lat=lat,long=lon,origin=origin,dest=dest)
 
 if __name__ == '__main__':
     graph,location_info,n = m.load_data()
-    print(location_info)
+#     print(location_info)
     app.run(debug=True,port=5000)

@@ -54,6 +54,8 @@ def get_path(graph,n,start,goal):
             # print(graph1)      
             # print()         
     return max_path.split(",")
+
+
 if __name__ == "__main__":
     # graph = [[0,0,0,0,0,0,0],
     #          [0,0,0,2,0,1,0],

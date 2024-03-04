@@ -34,8 +34,9 @@ def load_data():
 def get_route_for_map(graph,n,st,end):
     path,dis,path_list = ucs(graph,n+1,st,end)
     # print(dis)
-    print(path_list)
+    # print(path_list)
     return path_list
+
 def get_all_points_for_ucs_route(path_list,location_info):
     n = len(path_list)
     lat = []
@@ -43,8 +44,8 @@ def get_all_points_for_ucs_route(path_list,location_info):
     for i in range(0,n-1):
         p1 = location_info[path_list[i]]
         p2 = location_info[path_list[i+1]]
-        print(p1)
-        print(p2)
+        # print(p1)
+        # print(p2)
         la,lo = getpoints(p1[0],p1[1],p2[0],p2[1])
         lat.extend(la)
         longi.extend(lo)
