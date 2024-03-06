@@ -33,55 +33,41 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script> 
     <link rel="stylesheet" href="https://bootswatch.com/4/materia/bootstrap.min.css"> 
-    <style>
-
-      #issMap {
-        height: 400px;
-        width: 550px;
-        border: solid black 3px;
-        border-radius: 10px;
-        margin-left: 30px;
-        margin-bottom: 5px;
-        padding-left: 50px;
-        margin-top: 60px;
-      }
-
-      #box{
-          height:430px;
-          width:590px;
-          border:solid black 3px;
-          border-radius: 10px;
-          margin-left: 150px;
-          margin-bottom: 25px;
-      }
-
-      .header_MB{
-        font-size: 32px;
-        font-weight: 200; 
-        font-family: 'Nanum Myeongjo';
-      }
-
-    </style>
+    <link rel="stylesheet" href="static/css/maps.css"> 
     <title>Our map</title>
-    <style>
-        body{
-          min-height: 100vh;
-          background-image: linear-gradient( 109.6deg,  rgb(28, 28, 28), rgb(48, 48, 48) 32.6%, rgb(64, 64, 64) 62.7%, rgb(55, 55, 55) 100.2% );
-        }
-      </style>
+    <script src="static/js/maps.js"></script>
   </head>
   <body>
-    
     <div class="d-flex flex-row flex-md-row justify-content-between align-items-center p-3 px-md-4 mb-3 bg-dark border-bottom box-shadow" style="color: whitesmoke;">
         <h5 style="width: 100%;" class="my-0 mr-md-auto header_MB">Navigation</h5>
         <img src="static/images/logo.png" width="40" height="40"/>
-        <div style="width: 100%;"></div>
+        <div style="width: 100%;" class="d-none d-md-block"></div>
       </div>
     <div>
 
-    <div class="d-flex flex-row justify-content-center align-items-center">
+    <div class="d-flex flex-md-row flex-column justify-content-center align-items-center" style="height: 80vh;">
       <div id="issMap"></div>
+      <form onsubmit="onSubmit(event)">
+        <h2>Plan your Route</h2>
+        <label for="source">Source:</label><br>
+        <select id="source" name="source">
+          <option value="location1">Location 1</option>
+          <option value="location2">Location 2</option>
+          <option value="location3">Location 3</option>
+        </select>
+        <br/>
+        <label for="destination">Destination:</label><br>
+        <select id="destination" name="destination">
+          <option value="location1">Location 1</option>
+          <option value="location2">Location 2</option>
+          <option value="location3">Location 3</option>
+        </select>
+        <br/>
+        <input type="submit" value="Plan Route">
+      </form>
+      
     </div>
+    <div id="result"></div>
 
     <!-- <script src="static/js/maps.js" lat = {{lat}} long = {{long}} origin = {{origin}} dest = {{dest}}> </script>     -->
     <script>
