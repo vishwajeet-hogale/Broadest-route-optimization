@@ -6,9 +6,6 @@ import json
 import main.simulation.traversal as traversal
 
 app=Flask(__name__)
-
-
-
 app.secret_key = "mysecretkey"
 
 
@@ -19,7 +16,7 @@ def home():
         end = 3
         pst = location_info[st]
         pend = location_info[end] 
-        dist,avg_width,path_list = traversal.findpath('dataset4POC 3.xlsx',st-1,end-1)
+        dist,avg_width,path_list,_ = traversal.findpath('dataset4POC 3.xlsx',st-1,end-1)
         support_points = m.get_support_points(path_list,location_info)
         # print(support_points)
         j = m.get_points_using_supporting_points(support_points,pst,pend)   # Replace this with node ordering. 
