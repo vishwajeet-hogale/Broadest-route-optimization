@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect, url_for, flash
+from flask import Flask, render_template, jsonify, request, redirect, url_for, flash, Response
 # from flask_mysqldb import MySQL
 import random
 import main.simulation.matrix as m
@@ -33,6 +33,17 @@ def home():
         lon=j[0]['longpoints']
        
         return render_template('map.html',lat=lat,long=lon,origin=origin,dest=dest)
+
+@app.route("/getNodes",methods=["GET"])
+def getNodes():
+        return_json = []
+        for i in location_info:
+                temp = dict()
+                temp["nodeName"] = str(i)
+                temp["address"] = m.get_reverse_geo(location_info[i][0],location_info[i][1])
+                return_json.append(temp)
+        return return_json
+
 
 if __name__ == '__main__':
     graph,location_info,n = m.load_data()
