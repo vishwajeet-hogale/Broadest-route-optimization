@@ -181,6 +181,7 @@ def min_max_scaling(column):
     scaled_column = (column - min_val) / (max_val - min_val)
     return scaled_column
 
+
 # Read graph data from excel file
 def findpath(filename,start,end):
     excel_file_path = 'dataset4POC 3.xlsx'  # path of the excel file
@@ -198,7 +199,8 @@ def findpath(filename,start,end):
     edges_data['width'] = min_max_scaling(edges_data['width'])
 
     # adjacency matrix with normalized width and distance
-    adjacency_matrix = create_adjacency_matrix(edges_data,lambda x,y : (1.1-x)*y )
+    adjacency_matrix_width_dist = create_adjacency_matrix(edges_data,lambda x,y : (1.1-x)*y )
+    adjacency_matrix_dist = create_adjacency_matrix(edges_data,lambda x,y : y )
 
 
     # define source and destination vertex
@@ -206,21 +208,23 @@ def findpath(filename,start,end):
     target_vertex = end
 
     # compute shortest path using bellman_ford or dijikstra's algorithm
-    shortest_path = uniform_cost_search(adjacency_matrix, source_vertex, target_vertex)
+    shortest_path_width_dist = uniform_cost_search(adjacency_matrix_width_dist, source_vertex, target_vertex)
+    shortest_path_dist = uniform_cost_search(adjacency_matrix_dist, source_vertex, target_vertex)
 
     # computing total distance and average width of the route road
     dist = 0
     width_sum=0
 
-    for i in range(len(shortest_path)-1):
-        dist += adjacency_matrix_distance[shortest_path[i]-1,shortest_path[i+1]-1]
-        width_sum += adjacency_matrix_width[shortest_path[i]-1,shortest_path[i+1]-1]
+    for i in range(len(shortest_path_width_dist)-1):
+        dist += adjacency_matrix_distance[shortest_path_width_dist[i]-1,shortest_path_width_dist[i+1]-1]
+        width_sum += adjacency_matrix_width[shortest_path_width_dist[i]-1,shortest_path_width_dist[i+1]-1]
 
-    avg_width = round(width_sum / len(shortest_path),2)
+    avg_width = round(width_sum / len(shortest_path_width_dist),2)
     print(f"Source ( {source_vertex} ) to Destination ( {target_vertex} )")
     print(f"Shortest distance  :  {dist}")
     print(f"Average width  :  {avg_width}")
-    print(f"Shortest path: {shortest_path}")
-    return dist,avg_width,shortest_path
+    print(f"Shortest path: {shortest_path_width_dist}")
+
+    return dist, avg_width, shortest_path_width_dist, shortest_path_dist
 
 

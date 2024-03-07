@@ -46,7 +46,8 @@
     <div>
 
     <div class="d-flex flex-md-row flex-column justify-content-center align-items-center" style="height: 80vh;">
-      <div id="issMap"></div>
+      <div id="route_dist"></div>
+      <div id="route_width"></div>
       <form onsubmit="onSubmit(event)">
         <h2>Plan your Route</h2>
         <label for="source">Source:</label><br>
@@ -72,98 +73,69 @@
     <!-- <script src="static/js/maps.js" lat = {{lat}} long = {{long}} origin = {{origin}} dest = {{dest}}> </script>     -->
     <script>
       var lat ={{lat}};
-var long = {{long}};
-var origin = {{origin}};
-var dest = {{dest}};
+      var long = {{long}};
+      var origin = {{origin}};
+      var dest = {{dest}};
 
 
-var box = document.getElementById("box");
+      function getRouteMaps(canavasID, route ) {
+        
+        var mymap = L.map(canavasID).setView(route.origin, 13);
+        var attribution =
+          '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors';
 
-async function getAdd(lat, long) {
-  url =
-    "https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=" +
-    lat +
-    "&lon=" +
-    long;
-  const response = await fetch(url);
-  const data = await response.json();
-  roadname = data["display_name"];
-  return roadname;
-}
+        var tileUrl = "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png";
+        var tiles = L.tileLayer(tileUrl, { attribution });
 
-async function getISS(o_lat, o_long, d_lat, d_long) {
-  url =
-    "https://api.tomtom.com/routing/1/calculateRoute/" +
-    o_lat +
-    "," +
-    o_long +
-    ":" +
-    d_lat +
-    "," +
-    d_long +
-    "/json?key=mHywp1xqUaq62ROfTAuCRKtxjTYA0Zak&routeType=shortest";
-  const response = await fetch(url);
-  const data = await response.json();
-  console.log(data);
-  avg = data["routes"][0]["summary"]["lengthInMeters"];
-  time_sec = data["routes"][0]["summary"]["travelTimeInSeconds"];
-  list = [avg, time_sec];
-  return list;
-}
+        tiles.addTo(mymap);
+        var marker = L.marker(route.origin);
+        marker.addTo(mymap);
+        marker.bindPopup("Origin").openPopup();
 
-const mymap = L.map("issMap").setView(origin, 13);
-const attribution =
-  '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors';
+        var marker1 = L.marker(route.dest);
+        marker1.addTo(mymap);
+        marker1.bindPopup("Destination").openPopup();
+        var i = 0;
+        console.log(long.length);
+        for (i = 0; i < lat.length; i++) {
+          var circle = L.circle([lat[i], long[i]], {
+            color: "yellow",
+            fillColor: "yellow",
+            fillOpacity: 0.5,
+            radius: 35,
+          });
+          circle.addTo(mymap);
+        }
 
-const tileUrl = "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png";
-const tiles = L.tileLayer(tileUrl, { attribution });
+        var issIcon = L.icon({
+          iconUrl: "{{url_for('static',filename='images/amb.png')}}",
+          iconSize: [50, 32],
+          iconAnchor: [25, 16],
+        });
+        let marker3 = L.marker(origin, { icon: issIcon }).addTo(mymap);
 
-tiles.addTo(mymap);
-const marker = L.marker(origin);
-marker.addTo(mymap);
-marker.bindPopup("Origin").openPopup();
+        let yo = [];
 
-const marker1 = L.marker(dest);
-marker1.addTo(mymap);
-marker1.bindPopup("Destination").openPopup();
-var i = 0;
-console.log(long.length);
-for (i = 0; i < lat.length; i++) {
-  const circle = L.circle([lat[i], long[i]], {
-    color: "yellow",
-    fillColor: "yellow",
-    fillOpacity: 0.5,
-    radius: 35,
-  });
-  circle.addTo(mymap);
-}
+        var i = 0, x = 0;
+        a = setInterval(function () {
+          mymap.removeLayer(marker3);
+          marker3 = L.marker([lat[i], long[i]], { icon: issIcon });
+          marker3.addTo(mymap);
 
-const issIcon = L.icon({
-  iconUrl: "{{url_for('static',filename='images/amb.png')}}",
-  iconSize: [50, 32],
-  iconAnchor: [25, 16],
-});
-let marker3 = L.marker(origin, { icon: issIcon }).addTo(mymap);
+          var circle2 = L.circle([lat[i], long[i]], {
+            color: "black",
+            fillColor: "yellow",
+            fillOpacity: 0.5,
+            radius: 2,
+          });
+          circle2.addTo(mymap);
+          i++;
+        }, 300);
+        
+      }
 
-let yo = [];
-
-var i = 0,
-  x = 0;
-a = setInterval(function () {
-  mymap.removeLayer(marker3);
-  marker3 = L.marker([lat[i], long[i]], { icon: issIcon });
-  marker3.addTo(mymap);
-
-  const circle2 = L.circle([lat[i], long[i]], {
-    color: "black",
-    fillColor: "yellow",
-    fillOpacity: 0.5,
-    radius: 2,
-  });
-  circle2.addTo(mymap);
-  i++;
-}, 300);
-
+      getRouteMaps('route_dist', {lat,long,origin,dest})
+      getRouteMaps('route_width', {lat,long,origin,dest})
     </script>
       
       
