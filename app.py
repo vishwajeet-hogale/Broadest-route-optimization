@@ -4,7 +4,7 @@ import random
 import main.simulation.matrix as m
 import json
 import main.simulation.traversal as traversal
-
+import time
 app=Flask(__name__)
 app.secret_key = "mysecretkey"
 
@@ -38,6 +38,7 @@ def getNodes():
                 temp["nodeName"] = str(i)
                 temp["address"] = m.get_reverse_geo(location_info[i][0],location_info[i][1])
                 return_json.append(temp)
+        
         return return_json
 
 
@@ -47,8 +48,11 @@ def route():
         end = int(request.args.get('destination'))
         pst = location_info[st]
         pend = location_info[end] 
+
         dist, avg_width, path_list_width_dist, path_list_dist = traversal.findpath('dataset4POC 3.xlsx',st-1,end-1)
+
         support_points_width_dist = m.get_support_points(path_list_width_dist,location_info)
+
         support_points_dist = m.get_support_points(path_list_dist,location_info)
         # print(support_points)
         j_wd = m.get_points_using_supporting_points(support_points_width_dist,pst,pend)   # Replace this with node ordering. 
@@ -63,29 +67,29 @@ def route():
         lat_d=j_d[0]['latpoints']
         lon_d=j_d[0]['longpoints']
 
-        print(lat_wd,lat_d)
-        print(lon_wd,lon_d)
-
+        print(dist,avg_width)
         data = {
                'route_dist' : {
                         'latitude':lat_d,
                         'longitude': lon_d,
-                        'distance':dist, 
-                        'avg_width':avg_width
+                        'distance':dist['dist'], 
+                        'avg_width':avg_width['dist']
                 },
                 'route_width_dist' : {
                         'latitude':lat_wd,
                         'longitude': lon_wd,
-                        'distance':dist, 
-                        'avg_width':avg_width
+                        'distance':dist['width'], 
+                        'avg_width':avg_width['width']
                 },
                 'origin':origin,
                 'destination':dest,
         }
-
+        # print(data)
         response = app.response_class(response=json.dumps(data),
                                   status=200,
                                   mimetype='application/json')
+        
+
         return response
 
 

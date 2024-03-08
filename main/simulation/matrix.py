@@ -55,7 +55,7 @@ def get_drive_time(o_lat,o_long,d_lat,d_long):
     url = """https://api.tomtom.com/routing/1/calculateRoute/{},{}:{},{}/json?key=mHywp1xqUaq62ROfTAuCRKtxjTYA0Zak&routeType=shortest""".format(o_lat,o_long,d_lat,d_long)
     #url = "https://api.tomtom.com/traffic/map/4/tile/flow/{style}/{zoom}/{x}/{y}.{mimeType}?key=mHywp1xqUaq62ROfTAuCRKtxjTYA0Zak".format(style='absolute',zoom=12,x=1207,y=1539,mimeType='.png')
     #url="https://api.tomtom.com/map/1/wms/?request=GetMap&srs=EPSG%3A4326&bbox=-0.489%2C51.28%2C0.236%2C51.686&width=512&height=512&format=image%2Fjpeg&layers=basic&styles=&service=WMS&version=1.1.1&key=mHywp1xqUaq62ROfTAuCRKtxjTYA0Zak"
-    response = urlfetch.get(url)
+    response = urlfetch.get(url,validate_certificate='Corp-Prj-Root-CA.crt')
     try:
         
         response_json = json.loads(response.content)
@@ -71,7 +71,7 @@ def get_drive_time(o_lat,o_long,d_lat,d_long):
 # print(j)
 def getpoints(o_lat,o_long,d_lat,d_long):
     url = "https://api.tomtom.com/routing/1/calculateRoute/{},{}:{},{}/json?key=mHywp1xqUaq62ROfTAuCRKtxjTYA0Zak".format(o_lat,o_long,d_lat,d_long)
-    response = urlfetch.get(url)
+    response = urlfetch.get(url,validate_certificate='Corp-Prj-Root-CA.crt')
     latitude=[]
     longitude=[]
     try:
