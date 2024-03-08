@@ -212,19 +212,27 @@ def findpath(filename,start,end):
     shortest_path_dist = uniform_cost_search(adjacency_matrix_dist, source_vertex, target_vertex)
 
     # computing total distance and average width of the route road
-    dist = 0
-    width_sum=0
+    dist_dist = 0
+    width_sum_dist=0
+
+    for i in range(len(shortest_path_dist)-1):
+        dist_dist += adjacency_matrix_distance[shortest_path_dist[i]-1,shortest_path_dist[i+1]-1]
+        width_sum_dist += adjacency_matrix_width[shortest_path_dist[i]-1,shortest_path_dist[i+1]-1]
+
+    dist_width = 0
+    width_sum_width=0
 
     for i in range(len(shortest_path_width_dist)-1):
-        dist += adjacency_matrix_distance[shortest_path_width_dist[i]-1,shortest_path_width_dist[i+1]-1]
-        width_sum += adjacency_matrix_width[shortest_path_width_dist[i]-1,shortest_path_width_dist[i+1]-1]
+        dist_width += adjacency_matrix_distance[shortest_path_width_dist[i]-1,shortest_path_width_dist[i+1]-1]
+        width_sum_width += adjacency_matrix_width[shortest_path_width_dist[i]-1,shortest_path_width_dist[i+1]-1]
 
-    avg_width = round(width_sum / len(shortest_path_width_dist),2)
-    print(f"Source ( {source_vertex} ) to Destination ( {target_vertex} )")
-    print(f"Shortest distance  :  {dist}")
-    print(f"Average width  :  {avg_width}")
-    print(f"Shortest path: {shortest_path_width_dist}")
-
-    return dist, avg_width, shortest_path_width_dist, shortest_path_dist
+    avg_width_dist = round(width_sum_dist / len(shortest_path_width_dist),2)
+    avg_width_width = round(width_sum_width / len(shortest_path_width_dist),2)
+    # print(f"Source ( {source_vertex} ) to Destination ( {target_vertex} )")
+    # print(f"Shortest distance  :  {dist}")
+    # print(f"Average width  :  {avg_width}")
+    print(f"Shortest path width distance: {shortest_path_width_dist}")
+    print(f"Shortest path distance: {shortest_path_dist}")
+    return {'width':dist_width,'dist':dist_dist}, {'dist':avg_width_dist,'width':avg_width_width}, shortest_path_width_dist, shortest_path_dist
 
 

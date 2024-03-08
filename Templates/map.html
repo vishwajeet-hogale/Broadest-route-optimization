@@ -45,23 +45,35 @@
       </div>
     <div>
 
-    <div class="d-flex flex-md-row flex-column justify-content-center align-items-center" style="height: 80vh;">
-      <div id="route_dist"></div>
-      <div id="route_width"></div>
-      <form onsubmit="onSubmit(event)">
+    <div class="d-flex flex-md-row flex-column justify-content-center align-items-center" style="height: 80vh; color: white;">
+      <div style=" width:max-content;">
+        <div class="header_MB" style="font-size: 24px;">Route : Shortest Distance</div>
+        <div id="route_dist"></div>
+        <div>
+          <div>Distance :<span id="dist_dist"></span></div>
+          <div>Average width : <span id="dist_avg_width"></span></div> 
+        </div>
+      </div> 
+      <div style=" width: max-content;">
+        <div class="header_MB" style="font-size: 24px;">Route : Width and Distance</div>
+        <div id="route_width"></div>
+        <div >
+          <div>Distance :<span id="width_dist"></span></div>
+          <div>Average width : <span id="width_avg_width"></span></div> 
+        </div>
+      </div>
+      
+
+      <form id="route_form" style=" width: 100%;">
         <h2>Plan your Route</h2>
-        <label for="source">Source:</label><br>
-        <select id="source" name="source">
-          <option value="location1">Location 1</option>
-          <option value="location2">Location 2</option>
-          <option value="location3">Location 3</option>
+        <label for="source_dropdown">Source:</label><br>
+        <select id="source_dropdown" name="source">
+          <option value="1" selected>None</option>  
         </select>
         <br/>
-        <label for="destination">Destination:</label><br>
-        <select id="destination" name="destination">
-          <option value="location1">Location 1</option>
-          <option value="location2">Location 2</option>
-          <option value="location3">Location 3</option>
+        <label for="destination_dropdown">Destination:</label><br>
+        <select id="destination_dropdown" name="destination">
+          <option value="1" selected>None</option>  
         </select>
         <br/>
         <input type="submit" value="Plan Route">
@@ -72,15 +84,71 @@
 
     <!-- <script src="static/js/maps.js" lat = {{lat}} long = {{long}} origin = {{origin}} dest = {{dest}}> </script>     -->
     <script>
-      var lat ={{lat}};
-      var long = {{long}};
-      var origin = {{origin}};
-      var dest = {{dest}};
 
+      // var lat ={{lat}};
+      // var long = {{long}};
+      // var origin = {{origin}};
+      // var dest = {{dest}};
+      var map_dist = L.map('route_dist').setView([12.878876, 77.495039], 13);
+      var map_width = L.map('route_width').setView([12.878876, 77.495039], 13);
 
-      function getRouteMaps(canavasID, route ) {
+      var routeForm = document.getElementById("route_form")
+      routeForm.addEventListener("submit",onSubmitRoute)
+
+      function onSubmitRoute(e) {
+        map_dist.remove()
+        map_width.remove()
         
-        var mymap = L.map(canavasID).setView(route.origin, 13);
+        map_dist = L.map('route_dist').setView([12.878876, 77.495039], 13);
+        map_width = L.map('route_width').setView([12.878876, 77.495039], 13);
+
+        e.preventDefault()
+        const source =e.target[0].value
+        const destination =e.target[1].value
+
+        fetchData(`http://localhost:5000/route?origin=${source}&destination=${destination}`).then((res)=>{
+
+
+        const {destination,origin,route_dist,route_width_dist} = res
+        $('#width_dist').text(route_width_dist.distance)
+        $('#width_avg_width').text(route_width_dist.avg_width)
+        $('#dist_dist').text(route_dist.distance)
+        $('#dist_avg_width').text(route_dist.avg_width)
+
+        console.log({lat: route_width_dist.latitude, long:route_width_dist.longitude, origin, dest:destination})
+        console.log( {lat: route_dist.latitude, long:route_dist.longitude, origin, dest:destination})
+
+
+        getRouteMaps(map_dist, {lat: route_dist.latitude, long:route_dist.longitude, origin, dest:destination})
+        getRouteMaps(map_width, {lat: route_width_dist.latitude, long:route_width_dist.longitude, origin, dest:destination})
+      })
+      }
+
+      async function fetchData(url){
+        const res = await fetch(url)
+        const data = await res.json()
+        return data
+      }
+
+      // const locationData = fetchData('http://localhost:5000/getNodes').then(res=>{
+      //   console.log(res)
+        const html_for_option = `${locationsDetails.map((d,i)=>{
+          return `<option value="${d.nodeName}"> 
+                ${d.nodeName + " "+ d.address.split(',')[0]} 
+            </option>`
+        }).join("\n")}
+        ` 
+
+          $('#source_dropdown').append(html_for_option)
+          $('#destination_dropdown').append(html_for_option)
+        console.log(html_for_option)
+      // })
+
+  
+      
+      
+      function getRouteMaps(mymap, route ) {
+
         var attribution =
           '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors';
 
@@ -90,15 +158,16 @@
         tiles.addTo(mymap);
         var marker = L.marker(route.origin);
         marker.addTo(mymap);
+        
         marker.bindPopup("Origin").openPopup();
 
         var marker1 = L.marker(route.dest);
         marker1.addTo(mymap);
         marker1.bindPopup("Destination").openPopup();
         var i = 0;
-        console.log(long.length);
-        for (i = 0; i < lat.length; i++) {
-          var circle = L.circle([lat[i], long[i]], {
+        console.log(route.long.length);
+        for (i = 0; i < route.lat.length; i++) {
+          var circle = L.circle([route.lat[i], route.long[i]], {
             color: "yellow",
             fillColor: "yellow",
             fillOpacity: 0.5,
@@ -112,17 +181,17 @@
           iconSize: [50, 32],
           iconAnchor: [25, 16],
         });
-        let marker3 = L.marker(origin, { icon: issIcon }).addTo(mymap);
+        let marker3 = L.marker(route.origin, { icon: issIcon }).addTo(mymap);
 
         let yo = [];
 
         var i = 0, x = 0;
         a = setInterval(function () {
           mymap.removeLayer(marker3);
-          marker3 = L.marker([lat[i], long[i]], { icon: issIcon });
+          marker3 = L.marker([route.lat[i], route.long[i]], { icon: issIcon });
           marker3.addTo(mymap);
 
-          var circle2 = L.circle([lat[i], long[i]], {
+          var circle2 = L.circle([route.lat[i], route.long[i]], {
             color: "black",
             fillColor: "yellow",
             fillOpacity: 0.5,
@@ -134,8 +203,6 @@
         
       }
 
-      getRouteMaps('route_dist', {lat,long,origin,dest})
-      getRouteMaps('route_width', {lat,long,origin,dest})
     </script>
       
       
