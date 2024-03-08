@@ -33,6 +33,15 @@ def home():
        
         return render_template('map.html',lat=lat,long=lon,origin=origin,dest=dest)
 
+@app.route("/getNodes",methods=["GET"])
+def getNodes():
+        return_json = []
+        for i in location_info:
+                temp = dict()
+                temp["nodeName"] = str(i)
+                temp["address"] = m.get_reverse_geo(location_info[i][0],location_info[i][1])
+                return_json.append(temp)
+        return return_json
 
 @app.route("/getNodes",methods=["GET"])
 def getNodes():
