@@ -46,25 +46,30 @@
     <div>
 
     <div class="d-flex flex-md-row flex-column justify-content-center align-items-center" style="height: 80vh; color: white;">
-      <div style=" width:max-content;">
-        <div class="header_MB" style="font-size: 24px;">Route : Shortest Distance</div>
+      <div style=" width:max-content; position: relative;">
+        <div class="header_MB" style="font-size: 24px;width: 100%; text-align: center; padding: 1%; z-index: 10;">Route : Shortest Distance</div>
         <div id="route_dist"></div>
-        <div>
+                <div class="d-flex flex-row bg-dark" style=" width: 100%; justify-content: space-between; padding: 1%;">
+
           <div>Distance :<span id="dist_dist"></span></div>
+          <div>ETA :<span id="dist_eta"></span></div>
           <div>Average width : <span id="dist_avg_width"></span></div> 
         </div>
       </div> 
-      <div style=" width: max-content;">
-        <div class="header_MB" style="font-size: 24px;">Route : Width and Distance</div>
+
+
+      <div style=" width: max-content; position: relative;">
+        <div class="header_MB" style="font-size: 24px; width: 100%; text-align: center; padding: 1%; z-index: 10;">Route : Width and Distance</div>
         <div id="route_width"></div>
-        <div >
+        <div class="d-flex flex-row bg-dark" style=" width: 100%; justify-content: space-between; padding: 1%;">
           <div>Distance :<span id="width_dist"></span></div>
+          <div>ETA :<span id="width_eta"></span></div>
           <div>Average width : <span id="width_avg_width"></span></div> 
         </div>
       </div>
       
 
-      <form id="route_form" style=" width: 100%;">
+      <form id="route_form" style=" width: 100%; margin-top: 15px;">
         <h2>Plan your Route</h2>
         <label for="source_dropdown">Source:</label><br>
         <select id="source_dropdown" name="source">
@@ -110,9 +115,13 @@
 
 
         const {destination,origin,route_dist,route_width_dist} = res
+
         $('#width_dist').text(route_width_dist.distance)
         $('#width_avg_width').text(route_width_dist.avg_width)
+        $('#width_eta').text(Math.round(route_width_dist.eta))
+        
         $('#dist_dist').text(route_dist.distance)
+        $('#dist_eta').text(Math.round(route_dist.eta))
         $('#dist_avg_width').text(route_dist.avg_width)
 
         console.log({lat: route_width_dist.latitude, long:route_width_dist.longitude, origin, dest:destination})

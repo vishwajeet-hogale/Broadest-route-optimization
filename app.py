@@ -1,34 +1,19 @@
 from flask import Flask, render_template, jsonify, request, redirect, url_for, flash, Response
+from flask_cors import CORS 
 # from flask_mysqldb import MySQL
 import random
 import main.simulation.matrix as m
 import json
 import main.simulation.traversal as traversal
 import time
+
 app=Flask(__name__)
 app.secret_key = "mysecretkey"
-
+CORS(app) 
 
 @app.route('/')
-def home():
-        flash('Thank you! Your ambulance will arrive soon')
-        st = 42
-        end = 3
-        pst = location_info[st]
-        pend = location_info[end] 
-        dist,avg_width,path_list,_ = traversal.findpath('dataset4POC 3.xlsx',st-1,end-1)
-        support_points = m.get_support_points(path_list,location_info)
-        # print(support_points)
-        j = m.get_points_using_supporting_points(support_points,pst,pend)   # Replace this with node ordering. 
-        origin=pst
-        dest=pend
-        # print(j[0]['numofpoints'])
-        lat = []
-        lon=[]
-        lat=j[0]['latpoints']
-        lon=j[0]['longpoints']
-       
-        return render_template('map.html',lat=lat,long=lon,origin=origin,dest=dest)
+def home():       
+        return render_template('map.html')
 
 @app.route("/getNodes",methods=["GET"])
 def getNodes():
@@ -49,7 +34,7 @@ def route():
         pst = location_info[st]
         pend = location_info[end] 
 
-        dist, avg_width, path_list_width_dist, path_list_dist = traversal.findpath('dataset4POC 3.xlsx',st-1,end-1)
+        dist, avg_width, eta, path_list_width_dist, path_list_dist = traversal.findpath('dataset4POC 3.xlsx',st-1,end-1)
 
         support_points_width_dist = m.get_support_points(path_list_width_dist,location_info)
 
@@ -73,13 +58,15 @@ def route():
                         'latitude':lat_d,
                         'longitude': lon_d,
                         'distance':dist['dist'], 
-                        'avg_width':avg_width['dist']
+                        'avg_width':avg_width['dist'],
+                        'eta': eta['dist']
                 },
                 'route_width_dist' : {
                         'latitude':lat_wd,
                         'longitude': lon_wd,
                         'distance':dist['width'], 
-                        'avg_width':avg_width['width']
+                        'avg_width':avg_width['width'],
+                        'eta':eta['width']
                 },
                 'origin':origin,
                 'destination':dest,

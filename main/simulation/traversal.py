@@ -157,8 +157,9 @@ def create_adjacency_matrix(edges_data, cost_function):
         destination = int(edge['destination']) - 1  
         width = edge['width']
         distance = edge['distance']
-        adjacency_matrix[source, destination] = cost_function(width,distance) 
-        adjacency_matrix[destination, source] = cost_function(width,distance)
+        time = edge['time']
+        adjacency_matrix[source, destination] = cost_function(width,distance,time) 
+        adjacency_matrix[destination, source] = cost_function(width,distance,time)
 
     return adjacency_matrix
 
@@ -185,22 +186,25 @@ def min_max_scaling(column):
 # Read graph data from excel file
 def findpath(filename,start,end):
     excel_file_path = 'dataset4POC 3.xlsx'  # path of the excel file
-    edges_data = pd.read_excel(excel_file_path,dtype={'source':int,'destination':int,'width':float,'height':float})
+    edges_data = pd.read_excel(excel_file_path,dtype={'source':int,'destination':int,'width':float,'height':float,'speed limit':int,'time':float})
 
     # convert edge list into adjacency matrix
     # adjacency matrix with distnace as cost
-    adjacency_matrix_distance = create_adjacency_matrix(edges_data, lambda width,distance: distance )
+    adjacency_matrix_distance = create_adjacency_matrix(edges_data, lambda width,distance,time: distance )
 
     # adjacency matrix with width as cost
-    adjacency_matrix_width= create_adjacency_matrix(edges_data, lambda width,distance: width )
+    adjacency_matrix_width= create_adjacency_matrix(edges_data, lambda width,distance,time: width )
+
+    # adjacency matrix with time as cost
+    adjacency_matrix_time= create_adjacency_matrix(edges_data, lambda width,distance,time: time )
 
     # normalization of width and distance
     edges_data['distance'] = min_max_scaling(edges_data['distance'])
     edges_data['width'] = min_max_scaling(edges_data['width'])
 
     # adjacency matrix with normalized width and distance
-    adjacency_matrix_width_dist = create_adjacency_matrix(edges_data,lambda x,y : (1.1-x)*y )
-    adjacency_matrix_dist = create_adjacency_matrix(edges_data,lambda x,y : y )
+    adjacency_matrix_width_dist = create_adjacency_matrix(edges_data,lambda x,y,z : (1.1-x)*y )
+    adjacency_matrix_dist = create_adjacency_matrix(edges_data,lambda x,y,z : y )
 
 
     # define source and destination vertex
@@ -214,17 +218,20 @@ def findpath(filename,start,end):
     # computing total distance and average width of the route road
     dist_dist = 0
     width_sum_dist=0
-
+    time_dist=0
     for i in range(len(shortest_path_dist)-1):
         dist_dist += adjacency_matrix_distance[shortest_path_dist[i]-1,shortest_path_dist[i+1]-1]
+        time_dist += adjacency_matrix_time[shortest_path_dist[i]-1,shortest_path_dist[i+1]-1]
         width_sum_dist += adjacency_matrix_width[shortest_path_dist[i]-1,shortest_path_dist[i+1]-1]
 
     dist_width = 0
     width_sum_width=0
-
+    time_width=0
     for i in range(len(shortest_path_width_dist)-1):
         dist_width += adjacency_matrix_distance[shortest_path_width_dist[i]-1,shortest_path_width_dist[i+1]-1]
         width_sum_width += adjacency_matrix_width[shortest_path_width_dist[i]-1,shortest_path_width_dist[i+1]-1]
+        time_width += adjacency_matrix_time[shortest_path_width_dist[i]-1,shortest_path_width_dist[i+1]-1]
+
 
     avg_width_dist = round(width_sum_dist / len(shortest_path_width_dist),2)
     avg_width_width = round(width_sum_width / len(shortest_path_width_dist),2)
@@ -233,6 +240,6 @@ def findpath(filename,start,end):
     # print(f"Average width  :  {avg_width}")
     print(f"Shortest path width distance: {shortest_path_width_dist}")
     print(f"Shortest path distance: {shortest_path_dist}")
-    return {'width':dist_width,'dist':dist_dist}, {'dist':avg_width_dist,'width':avg_width_width}, shortest_path_width_dist, shortest_path_dist
+    return {'width':dist_width,'dist':dist_dist}, {'dist':avg_width_dist,'width':avg_width_width},{'dist':time_dist,'width':time_width}, shortest_path_width_dist, shortest_path_dist
 
 
