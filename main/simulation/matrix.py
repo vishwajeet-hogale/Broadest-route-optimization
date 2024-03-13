@@ -14,6 +14,7 @@ def convert_cooridinates_csv_to_json(df):
     for i,j in zip(nodes,all_coords):
         big_dict[i] = j
     return big_dict
+
 def create_adjacency_matrix(df,n):
     graph = [[0 for i in range(n+1)] for j in range(n+1)]
     for i,row in df.iterrows():

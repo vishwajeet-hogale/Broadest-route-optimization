@@ -116,16 +116,14 @@
 
         const {destination,origin,route_dist,route_width_dist} = res
 
-        $('#width_dist').text(route_width_dist.distance)
-        $('#width_avg_width').text(route_width_dist.avg_width)
-        $('#width_eta').text(Math.round(route_width_dist.eta))
+        $('#width_dist').text(route_width_dist.distance+'km')
+        $('#width_avg_width').text(route_width_dist.avg_width+'m')
+        $('#width_eta').text(Math.round(route_width_dist.eta)+'min')
         
-        $('#dist_dist').text(route_dist.distance)
-        $('#dist_eta').text(Math.round(route_dist.eta))
-        $('#dist_avg_width').text(route_dist.avg_width)
+        $('#dist_dist').text(route_dist.distance+'km')
+        $('#dist_eta').text(Math.round(route_dist.eta)+'min')
+        $('#dist_avg_width').text(route_dist.avg_width+'m')
 
-        console.log({lat: route_width_dist.latitude, long:route_width_dist.longitude, origin, dest:destination})
-        console.log( {lat: route_dist.latitude, long:route_dist.longitude, origin, dest:destination})
 
 
         getRouteMaps(map_dist, {lat: route_dist.latitude, long:route_dist.longitude, origin, dest:destination})
@@ -139,8 +137,6 @@
         return data
       }
 
-      // const locationData = fetchData('http://localhost:5000/getNodes').then(res=>{
-      //   console.log(res)
         const html_for_option = `${locationsDetails.map((d,i)=>{
           return `<option value="${d.nodeName}"> 
                 ${d.nodeName + " "+ d.address.split(',')[0]} 
@@ -150,8 +146,6 @@
 
           $('#source_dropdown').append(html_for_option)
           $('#destination_dropdown').append(html_for_option)
-        console.log(html_for_option)
-      // })
 
   
       
@@ -174,7 +168,6 @@
         marker1.addTo(mymap);
         marker1.bindPopup("Destination").openPopup();
         var i = 0;
-        console.log(route.long.length);
         for (i = 0; i < route.lat.length; i++) {
           var circle = L.circle([route.lat[i], route.long[i]], {
             color: "yellow",

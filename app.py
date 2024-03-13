@@ -52,7 +52,7 @@ def route():
         lat_d=j_d[0]['latpoints']
         lon_d=j_d[0]['longpoints']
 
-        print(dist,avg_width)
+        print(dist,avg_width,eta)
         data = {
                'route_dist' : {
                         'latitude':lat_d,
